@@ -46,7 +46,7 @@ class Details extends StatelessWidget {
             child: Container(
               alignment: Alignment.topCenter,
               child: ProductList(products: category.products))
-          )
+          ),
         ],
       ),
     );

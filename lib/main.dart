@@ -1,5 +1,7 @@
+import 'package:carolinaproj/models/cart_model.dart';
 import 'package:carolinaproj/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(
@@ -24,9 +26,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: "Carolina Cleaners",
-      home: Home()
+    return ChangeNotifierProvider(
+      create: (context) => CartModel(),
+      child: const MaterialApp(
+        title: "Carolina Cleaners",
+        home: Home()
+      ),
     );
   }
 

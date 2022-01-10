@@ -1,5 +1,7 @@
 import 'package:carolinaproj/models/product.dart';
+import 'package:carolinaproj/screens/cart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProductList extends StatefulWidget {
   final List<Product> products;
@@ -13,11 +15,19 @@ class ProductList extends StatefulWidget {
 class _ProductListState extends State<ProductList> {
   final List<Widget> _productTiles = [];
   final GlobalKey _listKey = GlobalKey();
+  late TextEditingController controller;
 
   @override
   void initState() {
     super.initState();
     _addProducts();
+    controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   void _addProducts() {
@@ -26,9 +36,33 @@ class _ProductListState extends State<ProductList> {
     }
   }
 
+  Future<String?> openDialog(String dialogTitle) => showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(dialogTitle),
+        content: TextField(
+          autofocus: true, keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          decoration: const InputDecoration(hintText: 'Enter Qty'),
+          controller: controller,
+        ),
+        actions: [
+          TextButton(onPressed: submit, child: const Text('SUBMIT'))
+        ],
+      ));
+
+  void submit() {
+    Navigator.of(context).pop(controller.text);
+  }
+
   Widget _buildTile(Product product) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () async {
+        final quantity = await openDialog(product.size);
+        if (quantity == null || quantity.isEmpty) return;
+        controller.clear();
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const Cart()));
+      },
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -44,7 +78,7 @@ class _ProductListState extends State<ProductList> {
                 ),
               ),
               Text(product.size, style: TextStyle(fontSize: 12, color: Colors.red[800])),
-              Text('\$${product.price}', style: TextStyle(fontSize: 17, color: Colors.black))
+              Text('\$${product.price}', style: const TextStyle(fontSize: 17, color: Colors.black)),
             ],
           ),
         ),
