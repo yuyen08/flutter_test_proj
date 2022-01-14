@@ -1,7 +1,9 @@
+import 'package:carolinaproj/models/cart_model.dart';
 import 'package:carolinaproj/models/product.dart';
 import 'package:carolinaproj/screens/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class ProductList extends StatefulWidget {
   final List<Product> products;
@@ -61,6 +63,8 @@ class _ProductListState extends State<ProductList> {
         final quantity = await openDialog(product.size);
         if (quantity == null || quantity.isEmpty) return;
         controller.clear();
+        context.read<CartModel>().addCartItem(
+            CartItem(description: product.description, size: product.size, price: product.price, quantiy: int.parse(quantity)));
         Navigator.push(context, MaterialPageRoute(builder: (context) => const Cart()));
       },
       child: Center(
@@ -108,6 +112,7 @@ class _ProductListState extends State<ProductList> {
   Widget build(BuildContext context) {
     return
       GridView.count(
+        key: _listKey,
         crossAxisCount: 3,
         children: List.generate(_productTiles.length, (index) {
           return _productTiles[index];
