@@ -38,10 +38,16 @@ class _ProductListState extends State<ProductList> {
     }
   }
 
-  Future<String?> openDialog(String dialogTitle) => showDialog<String>(
+  Future<String?> openDialog(double price, String dialogTitle) => showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(dialogTitle),
+        title: Row(
+          children: <Widget>[
+            Text("\$$price"),
+            const Padding(padding: EdgeInsets.all(3.0)),
+            Text("($dialogTitle)", style: const TextStyle(fontSize: 14),),
+          ],
+        ),
         content: TextField(
           autofocus: true, keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -60,7 +66,7 @@ class _ProductListState extends State<ProductList> {
   Widget _buildTile(Product product) {
     return TextButton(
       onPressed: () async {
-        final quantity = await openDialog(product.size);
+        final quantity = await openDialog(product.price, product.size);
         if (quantity == null || quantity.isEmpty) return;
         controller.clear();
         context.read<CartModel>().addCartItem(

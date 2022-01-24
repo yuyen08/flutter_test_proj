@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CartItem {
   final String description;
@@ -28,6 +30,10 @@ class CartModel with ChangeNotifier {
   }
 
   void addCartItem(CartItem value) {
+    final url = Uri.parse('');
+    http.post(url, body: json.encode({
+
+    }));
     _items.add(value);
     notifyListeners();
   }
