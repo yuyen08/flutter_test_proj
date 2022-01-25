@@ -23,6 +23,20 @@ class _AuthFormState extends State<AuthForm> {
   var _userName = '';
   var _userPassword = '';
 
+  void _trySubmit() {
+    final isValid = _formKey.currentState?.validate();
+    FocusScope.of(context).unfocus();
+
+    if (isValid!) {
+      widget.submitFn(
+        _userEmail.trim(),
+        _userPassword.trim(),
+        _userName.trim(),
+        _isLogin,
+        context
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,9 +63,7 @@ class _AuthFormState extends State<AuthForm> {
                       return null;
                     },
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email address',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Email address'),
                     onSaved: (value) {
                       _userEmail = value!;
                     },
@@ -68,7 +80,7 @@ class _AuthFormState extends State<AuthForm> {
                         }
                         return null;
                       },
-                      decoration: InputDecoration(labelText: 'Username'),
+                      decoration: const InputDecoration(labelText: 'Username'),
                       onSaved: (value) {
                         _userName = value!;
                       },
@@ -88,17 +100,20 @@ class _AuthFormState extends State<AuthForm> {
                     },
                   ),
                   const SizedBox(height: 12),
-                  if (widget.isLoading)
-                    const CircularProgressIndicator(),
+                  if (widget.isLoading) const CircularProgressIndicator(),
                   if (!widget.isLoading)
                     ElevatedButton(
                       child: Text(_isLogin ? 'Login' : 'Signup'),
-                      onPressed: () {},
+                      onPressed: _trySubmit,
                     ),
                   if (!widget.isLoading)
                     TextButton(
                       child: Text(_isLogin ? 'Create new account' : 'I already have an account'),
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          _isLogin = !_isLogin;
+                        });
+                      },
                     )
                 ],
               ),
